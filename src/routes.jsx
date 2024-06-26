@@ -1,9 +1,9 @@
 import Dashboard from "./pages/admin/dashboard";
 import Category from "./pages/admin/category";
 
-const icon = {
-  className: "w-5 h-5 text-inherit",
-};
+// const icon = {
+//   className: "w-5 h-5 text-inherit",
+// };
 
 const routes = [
   {
