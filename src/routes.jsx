@@ -1,5 +1,6 @@
 import Dashboard from "./pages/admin/dashboard";
-import Category from "./pages/admin/category";
+import AddCategory from "./pages/admin/category/addCategory";
+import ListCategory from "./pages/admin/category/listCategory";
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -18,18 +19,17 @@ const routes = [
       },
       {
         name: "category",
-        element: <Category />,
         subPages: [
           {
-            name: 'Add Catgegory',
+            name: 'Add Category',
             path: '/add-category',
-            element: <div>Add Category</div>
+            element: <AddCategory />
           },
           {
-            name: 'Cat 456',
-            path: '/cat-456',
-            element: <div>Cat 456</div>
-          },
+            name: 'List Category',
+            path: '/list-category',
+            element: <ListCategory />
+          }
         ]
       },
     ]
