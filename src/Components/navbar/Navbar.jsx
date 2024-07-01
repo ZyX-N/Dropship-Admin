@@ -21,7 +21,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
         >
           <Bars3Icon className="size-6" />
         </button>
-        <button className="flex items-center bg-blue-600 border-0 p-2 rounded-full focus:outline-none hover:bg-bue-700 hover:scale-105 transition-all duration-300 text-white mt-4 md:mt-0" onClick={logoutHandler}>
+        <button className="flex items-center bg-blue-600 border-0 p-2 rounded-full focus:outline-none hover:bg-bue-700 hover:scale-105 transition-all duration-300 text-white mt-4 md:mt-0 shadow-md shadow-gray-500" onClick={logoutHandler}>
           <LogoutIcon />
         </button>
       </div>
