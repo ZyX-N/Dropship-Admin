@@ -131,7 +131,7 @@ const Admin = () => {
       {/* MAIN SCREEN */}
       <div
         className={`${sidebarOpen ? "lg:w-[calc(100%-300px)]" : "lg:w-full"
-          } bg-[#f4f7fa] w-full px-6 pt-4 flex flex-col gap-4 relative overflow-y-auto h-screen transition-all duration-500 ml-auto`}
+          } bg-[#f4f7fa] w-full px-6 pt-4 flex flex-col gap-4 overflow-y-auto h-screen transition-all duration-500 ml-auto`}
       >
         <div className="rounded-lg w-full">
           <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />

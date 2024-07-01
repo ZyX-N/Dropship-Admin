@@ -38,7 +38,7 @@ const AddCategory = () => {
         <h1 className="text-2xl font-semibold capitalize">add category</h1>
       </div>
 
-      <div className="w-full pt-4">
+      <div className="w-full py-4">
         <form
           className="size-full flex flex-col gap-12"
           onSubmit={submitHandler}
@@ -55,7 +55,7 @@ const AddCategory = () => {
                 type="text"
                 id="title"
                 placeholder="Enter category title"
-                value={data.target}
+                value={data.title}
                 onChange={(e) =>
                   setData((prev) => ({ ...prev, title: e.target.value }))
                 }
@@ -126,7 +126,7 @@ const AddCategory = () => {
                 <img
                   src={data.image ? URL.createObjectURL(data.image) : ""}
                   alt="Zixen"
-                  className="size-72 object-cover"
+                  className="size-72 object-cover border-2 border-black rounded-lg p-0.5"
                 />
               </div>
             )}
