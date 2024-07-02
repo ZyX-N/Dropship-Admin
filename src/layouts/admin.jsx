@@ -8,6 +8,7 @@ import {
 import Navbar from "../Components/navbar/Navbar";
 import { TbPoint } from "react-icons/tb";
 import ProContext from "../context/createContext";
+import { ManageCategoryProvider } from "../pages/admin/Category/ManageCategory";
 
 const Admin = () => {
   const { sidebarOpen, setSidebarOpen } = useContext(ProContext);
@@ -34,128 +35,131 @@ const Admin = () => {
   };
 
   return (
-    <main className="h-screen flex justify-between relative">
-      {/* SIDEBAR */}
-      <div
-        className={`${
-          sidebarOpen ? "left-0" : "-left-[300px]"
-        } absolute top-0 bg-white w-[300px] flex flex-col transition-all duration-500 z-20`}
-      >
-        <div className="w-full h-[80px] flex items-center justify-center relative">
-          <h1 className="text-xl font-medium text-gray-800">Admin</h1>
-          {sidebarOpen && (
-            <button
-              type="button"
-              className="absolute -right-16 top-3 hover:bg-gray-200 bg-white p-3 rounded-full lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <ArrowLeftIcon className="size-7" />
-            </button>
-          )}
-        </div>
+    <ManageCategoryProvider>
 
-        <div className="px-2 pb-2 w-full h-[calc(100vh-80px)]">
-          {routes?.map(
-            ({ layout, pages }) =>
-              layout === "admin" && (
-                <ul
-                  className="flex flex-col gap-2 px-6 size-full overflow-y-auto"
-                  key={layout}
-                >
-                  {pages.map(({ name, path, subPages }) => (
-                    <li className="w-full rounded-sm" key={name}>
-                      {subPages && subPages.length > 0 ? (
-                        <>
-                          <button
-                            type="button"
-                            className="bg-gray-200 hover:bg-blue-500 w-full rounded-md p-2 hover:text-white text-md text-gray-600 font-medium flex justify-between items-center"
-                            onClick={(e) => openAccordion(e)}
-                          >
-                            <span className="capitalize">{name}</span>
-                            <ChevronDownIcon className="size-5 rotate-0" />
-                          </button>
-                          <ul className="flex-col gap-1 mt-2 px-2 hidden">
-                            {subPages.map((item) => (
-                              <li
-                                className="rounded-sm py-1 px-4"
-                                key={item.name}
-                              >
-                                <Link
-                                  className="text-gray-600 flex gap-2 items-center"
-                                  to={`/${layout}${item.path}`}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "fill",
-                                      "#1e88e5"
-                                    );
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "stroke",
-                                      "#1e88e5"
-                                    );
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "fill",
-                                      "white"
-                                    );
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "stroke",
-                                      "black"
-                                    );
-                                  }}
-                                >
-                                  <TbPoint fill="white" stroke="black" />
-                                  {item.name}
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      ) : (
-                        <Link
-                          to={`/${layout}${path}`}
-                          className="bg-gray-200 hover:bg-blue-500 w-full hover:text-white rounded-md p-2 text-md text-gray-600 font-medium flex justify-between"
-                        >
-                          <span className="capitalize">{name}</span>
-                        </Link>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )
-          )}
-        </div>
-      </div>
+      <main className="h-screen flex justify-between relative">
+        {/* SIDEBAR */}
+        <div
+          className={`${sidebarOpen ? "left-0" : "-left-[300px]"
+            } absolute top-0 bg-white w-[300px] flex flex-col transition-all duration-500 z-20`}
+        >
+          <div className="w-full h-[80px] flex items-center justify-center relative">
+            <h1 className="text-xl font-medium text-gray-800">Admin</h1>
+            {sidebarOpen && (
+              <button
+                type="button"
+                className="absolute -right-16 top-3 hover:bg-gray-200 bg-white p-3 rounded-full lg:hidden"
+                onClick={() => setSidebarOpen(false)}
+              >
+                <ArrowLeftIcon className="size-7" />
+              </button>
+            )}
+          </div>
 
-      {/* MAIN SCREEN */}
-      <div
-        className={`${
-          sidebarOpen ? "lg:w-[calc(100%-300px)]" : "lg:w-full"
-        } bg-[#f4f7fa] w-full px-6 pt-4 flex flex-col gap-4 relative overflow-y-auto h-screen transition-all duration-500 ml-auto`}
-      >
-        <div className="rounded-lg w-full">
-          <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        </div>
+          <div className="px-2 pb-2 w-full h-[calc(100vh-80px)]">
 
-        <div className="">
-          <Routes>
             {routes?.map(
               ({ layout, pages }) =>
-                layout === "admin" &&
-                pages?.map(({ path, element, subPages }) => {
-                  return subPages && subPages.length > 0 ? (
-                    subPages.map((item) => (
-                      <Route exact path={item.path} element={item.element} />
-                    ))
-                  ) : (
-                    <Route exact path={path} element={element} />
-                  );
-                })
+                layout === "admin" && (
+                  <ul
+                    className="flex flex-col gap-2 px-6 size-full overflow-y-auto"
+                    key={layout}
+                  >
+                    {pages.map(({ name, path, subPages }) => (
+                      <li className="w-full rounded-sm" key={name}>
+                        {subPages && subPages.length > 0 ? (
+                          <>
+
+                            <button
+                              type="button"
+                              className="bg-gray-200 hover:bg-blue-500 w-full rounded-md p-2 hover:text-white text-md text-gray-600 font-medium flex justify-between items-center"
+                              onClick={(e) => openAccordion(e)}
+                            >
+                              <span className="capitalize">{name}</span>
+                              <ChevronDownIcon className="size-5 rotate-0" />
+                            </button>
+                            <ul className="flex-col gap-1 mt-2 px-2 hidden">
+                              {subPages.map((item) => (
+                                <li
+                                  className="rounded-sm py-1 px-4"
+                                  key={item.name}
+                                >
+                                  <Link
+                                    className="text-gray-600 flex gap-2 items-center"
+                                    to={`/${layout}${item.path}`}
+                                    onMouseEnter={(e) => {
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "fill",
+                                        "#1e88e5"
+                                      );
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "stroke",
+                                        "#1e88e5"
+                                      );
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "fill",
+                                        "white"
+                                      );
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "stroke",
+                                        "black"
+                                      );
+                                    }}
+                                  >
+                                    <TbPoint fill="white" stroke="black" />
+                                    {item.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </>
+                        ) : (
+                          <Link
+                            to={`/${layout}${path}`}
+                            className="bg-gray-200 hover:bg-blue-500 w-full hover:text-white rounded-md p-2 text-md text-gray-600 font-medium flex justify-between"
+                          >
+                            <span className="capitalize">{name}</span>
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
             )}
-          </Routes>
+          </div>
         </div>
-      </div>
-    </main>
+
+        {/* MAIN SCREEN */}
+        <div
+          className={`${sidebarOpen ? "lg:w-[calc(100%-300px)]" : "lg:w-full"
+            } bg-[#f4f7fa] w-full px-6 pt-2 flex flex-col gap-2  relative overflow-y-auto h-screen transition-all duration-500 ml-auto`}
+        >
+          <div className="rounded-lg h-[5vh]  w-full">
+            <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          </div>
+
+          <div className=" ">
+            <Routes>
+              {routes?.map(
+                ({ layout, pages }) =>
+                  layout === "admin" &&
+                  pages?.map(({ path, element, subPages }) => {
+                    return subPages && subPages.length > 0 ? (
+                      subPages.map((item) => (
+                        <Route exact path={item.path} element={item.element} />
+                      ))
+                    ) : (
+                      <Route exact path={path} element={element} />
+                    );
+                  })
+              )}
+            </Routes>
+          </div>
+        </div>
+      </main>
+    </ManageCategoryProvider>
   );
 };
 

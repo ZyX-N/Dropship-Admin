@@ -1,5 +1,8 @@
+import AddCategory from "./pages/admin/Category/AddCategory";
+import Category from "./pages/admin/Category/Category";
+import ListCategory from "./pages/admin/Category/ListCategory";
 import Dashboard from "./pages/admin/dashboard";
-import Category from "./pages/admin/category";
+
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -23,13 +26,14 @@ const routes = [
           {
             name: 'Add Catgegory',
             path: '/add-category',
-            element: <div>Add Category</div>
+            element: <AddCategory />
           },
           {
-            name: 'Cat 456',
-            path: '/cat-456',
-            element: <div>Cat 456</div>
+            name: 'List Category',
+            path: '/list-category',
+            element: <ListCategory />
           },
+          
         ]
       },
     ]
