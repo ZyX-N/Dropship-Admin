@@ -7,8 +7,8 @@ const ModalEdit = ({ children, title, open, setOpen, onSave }) => {
 
             <div className={`transition-all duration-500 ease-in-out relative transform overflow-hidden rounded-lg bg-white flex flex-col justify-between text-left shadow-xl w-full md:w-full md:max-w-3xl max-h-[90%] z-50`}>
 
-                <div className="bg-white border-b px-4 sm:p-4">
-                    <h3 className="text-base font-semibold leading-6 text-gray-900">{title}</h3>
+                <div className="bg-white border-b p-4">
+                    <h3 className="text-xl font-semibold leading-6 text-gray-900">{title}</h3>
                 </div>
 
                 <div className='p-4 w-full overflow-y-auto'>

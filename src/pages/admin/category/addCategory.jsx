@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import InputText from "../../../Components/input/Input-text";
 import InputCheckbox from "../../../Components/input/Input-checkbox";
 import ButtonSave from "../../../Components/button/Submit";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const AddCategory = () => {
   const [data, setData] = useState({
@@ -122,11 +123,14 @@ const AddCategory = () => {
               />
             </div>
             {data.image && (
-              <div className="grid-item">
+              <div className="grid-item relative size-72">
+                <button type="button" className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2" onClick={()=>setData((prev)=>({...prev,img:null}))}>
+                  <XMarkIcon className="size-5" />
+                </button>
                 <img
                   src={data.image ? URL.createObjectURL(data.image) : ""}
                   alt="Zixen"
-                  className="size-72 object-cover border-2 border-black rounded-lg p-0.5"
+                  className="size-full object-cover border-2 border-black rounded-lg p-0.5"
                 />
               </div>
             )}

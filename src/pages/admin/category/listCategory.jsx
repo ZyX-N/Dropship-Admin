@@ -123,7 +123,7 @@ const ListCategory = () => {
           <div className="flex flex-col gap-1">
             <label
               htmlFor="title"
-              className="font-medium text-lg tracking-wide"
+              className="font-medium text-base tracking-wide"
             >
               Title
             </label>
@@ -140,7 +140,7 @@ const ListCategory = () => {
           <div className="flex flex-col gap-1">
             <label
               htmlFor="slug"
-              className="font-medium text-lg tracking-wide"
+              className="font-medium text-base tracking-wide"
             >
               Slug
             </label>
@@ -159,7 +159,7 @@ const ListCategory = () => {
           <div className="flex flex-col gap-1">
             <label
               htmlFor="image"
-              className="font-medium text-lg tracking-wide"
+              className="font-medium text-base tracking-wide"
             >
               Image
             </label>
@@ -188,7 +188,7 @@ const ListCategory = () => {
           <div className="flex items-end gap-4 row-start-3 md:row-start-auto">
             <label
               htmlFor="title"
-              className="font-medium text-lg whitespace-nowrap"
+              className="font-medium text-base whitespace-nowrap"
             >
               Enter slug manually
             </label>
