@@ -1,16 +1,12 @@
 import React, { useContext, useState } from "react";
 import routes from "../routes";
 import { Link, Route, Routes } from "react-router-dom";
-import {
-  ArrowLeftIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/20/solid";
+import { ArrowLeftIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import Navbar from "../Components/navbar/Navbar";
 import { TbPoint } from "react-icons/tb";
 import Breadcrumb from "../Components/breadcrumb/Breadcrumb";
 
 const Admin = () => {
-
   const [sidebarOpen, setSidebarOpen] = useState(true);
   // const [breadcrumbData, setBreadcrumbData] = useState([
   //   { title: 'Admin', path: '/admin/dashboard' },
@@ -39,8 +35,9 @@ const Admin = () => {
     <main className="h-screen flex justify-between relative">
       {/* SIDEBAR */}
       <div
-        className={`${sidebarOpen ? "left-0" : "-left-[300px]"
-          } absolute top-0 bg-white w-[300px] flex flex-col transition-all duration-500 z-20`}
+        className={`${
+          sidebarOpen ? "left-0" : "-left-[300px]"
+        } absolute top-0 bg-white w-[300px] flex flex-col transition-all duration-500 z-20`}
       >
         <div className="w-full h-[80px] flex items-center justify-center relative">
           <h1 className="text-xl font-medium text-gray-800">Admin</h1>
@@ -130,8 +127,9 @@ const Admin = () => {
 
       {/* MAIN SCREEN */}
       <div
-        className={`${sidebarOpen ? "lg:w-[calc(100%-300px)]" : "lg:w-full"
-          } bg-[#f4f7fa] w-full px-6 pt-4 flex flex-col gap-4 overflow-y-auto h-screen transition-all duration-500 ml-auto`}
+        className={`${
+          sidebarOpen ? "lg:w-[calc(100%-300px)]" : "lg:w-full"
+        } bg-[#f4f7fa] w-full px-6 pt-4 flex flex-col gap-4 overflow-y-auto h-screen transition-all duration-500 ml-auto`}
       >
         <div className="rounded-lg w-full">
           <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
