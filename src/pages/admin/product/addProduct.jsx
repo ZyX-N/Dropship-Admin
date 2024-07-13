@@ -9,13 +9,12 @@ import HTMLEditor from "../../../Components/input/editor";
 const AddProduct = () => {
   const [data, setData] = useState({
     title: "",
-    hindiTitle: "",
-    hindiDescription: "",
     mrp: 0,
     price: 0,
     stock: 0,
     image: [],
     rating: 4,
+    slug: ""
   });
 
   const option = [
@@ -23,7 +22,10 @@ const AddProduct = () => {
     { _id: 2, title: "Electronic" },
     { _id: 3, title: "Kitchen" },
     { _id: 4, title: "Cloths" },
-    { _id: 5, title: "Shoes" },
+    { _id: 5, title: "Cloths" },
+    { _id: 6, title: "Cloths" },
+    { _id: 7, title: "Shoes" },
+    { _id: 8, title: "Shoes" },
   ];
 
   const [category, setCategory] = useState({ _id: null, title: null });
@@ -83,19 +85,18 @@ const AddProduct = () => {
 
             <div className="flex flex-col gap-1">
               <label
-                htmlFor="hindi-title"
+                htmlFor="category"
                 className="font-medium text-lg tracking-wide"
               >
-                Hindi Title
+                Category
               </label>
-              <InputText
+              <InputDropdown
                 type="text"
-                id="hindi-title"
-                placeholder="Enter hindi product title"
-                value={data.title}
-                onChange={(e) =>
-                  setData((prev) => ({ ...prev, hindiTitle: e.target.value }))
-                }
+                id="category"
+                placeholder="Select product category"
+                value={category.title}
+                setValue={setCategory}
+                option={option}
               />
             </div>
 
@@ -127,23 +128,6 @@ const AddProduct = () => {
                   multiple={false}
                 />
               </div>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label
-                htmlFor="category"
-                className="font-medium text-lg tracking-wide"
-              >
-                Category
-              </label>
-              <InputDropdown
-                type="text"
-                id="category"
-                placeholder="Select product category"
-                value={category.title}
-                setValue={setCategory}
-                option={option}
-              />
             </div>
 
             <div className="flex flex-col gap-1">
@@ -217,6 +201,32 @@ const AddProduct = () => {
                 }
               />
             </div>
+
+            <div className="flex flex-col gap-1">
+              <div className="flex gap-2">
+                <label
+                  htmlFor="slug"
+                  className="font-medium text-lg tracking-wide"
+                >
+                  Slug
+                </label>
+                <InputCheckbox
+                  value={manualSlug}
+                  onChange={(e) => setManualSlug(e.target.checked)}
+                />
+              </div>
+              <InputText
+                type="text"
+                id="slug"
+                placeholder="Product slug will be generated automatically"
+                value={data.slug}
+                onChange={(e) =>
+                  setData((prev) => ({ ...prev, slug: e.target.value }))
+                }
+                disabled={manualSlug ? false : true}
+                classes={manualSlug ? null : "cursor-not-allowed"}
+              />
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">
@@ -227,7 +237,7 @@ const AddProduct = () => {
               Description
             </label>
             <div className="bg-white">
-            <HTMLEditor />
+              <HTMLEditor />
             </div>
           </div>
 
