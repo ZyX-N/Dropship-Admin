@@ -1,46 +1,73 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import InputText from "../../../Components/input/Input-text";
 import InputCheckbox from "../../../Components/input/Input-checkbox";
 import ButtonSave from "../../../Components/button/Submit";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import InputDropdown from "../../../Components/input/input-dropdown";
 import HTMLEditor from "../../../Components/input/editor";
+import { getCall, postCall } from "../../../services/apiCall";
+import { getLoginToken } from "../../../services/token";
 
 const AddProduct = () => {
+
+  const token = getLoginToken();
+
   const [data, setData] = useState({
     title: "",
-    mrp: 0,
+    strikePrice: 0,
     price: 0,
     stock: 0,
     image: [],
     rating: 4,
-    slug: ""
+    slug: "",
+    active:true
   });
-
-  const option = [
-    { _id: 1, title: "Household" },
-    { _id: 2, title: "Electronic" },
-    { _id: 3, title: "Kitchen" },
-    { _id: 4, title: "Cloths" },
-    { _id: 5, title: "Cloths" },
-    { _id: 6, title: "Cloths" },
-    { _id: 7, title: "Shoes" },
-    { _id: 8, title: "Shoes" },
-  ];
 
   const [category, setCategory] = useState({ _id: null, title: null });
   const [description, setDescription] = useState("");
   const [manualSlug, setManualSlug] = useState(false);
+  const [categoryList, setCategoryList] = useState([]);
 
-  const submitHandler = (e) => {
+  console.log(description);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(data);
+
+    const headers = {
+      Authorization: `Bearer ${token}`
+    }
+
+    const body = {
+      ...data, ...{ category: category._id, description }
+    }
+
+    let submitStatus = await postCall("/product", headers, body);
+    if (submitStatus && submitStatus.status) {
+      // setCategoryList(data.data);
+      alert("Product submitted successfully!")
+    }
+    console.log(submitStatus)
   };
 
   const fileHandler = (e) => {
     const file = e.target.files[0];
     setData((prev) => ({ ...prev, image: file }));
   };
+
+  const getCategory = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    }
+    let data = await getCall("/category/drop-down-list", headers);
+
+    if (data && data.status) {
+      setCategoryList(data.data);
+    }
+  }
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   useMemo(() => {
     if (manualSlug) {
@@ -96,7 +123,7 @@ const AddProduct = () => {
                 placeholder="Select product category"
                 value={category.title}
                 setValue={setCategory}
-                option={option}
+                option={categoryList}
               />
             </div>
 
@@ -132,18 +159,18 @@ const AddProduct = () => {
 
             <div className="flex flex-col gap-1">
               <label
-                htmlFor="mrp"
+                htmlFor="strikePrice"
                 className="font-medium text-lg tracking-wide"
               >
                 MRP
               </label>
               <InputText
                 type="number"
-                id="mrp"
+                id="strikePrice"
                 placeholder="Enter product MRP"
-                value={data.mrp}
+                value={data.strikePrice}
                 onChange={(e) =>
-                  setData((prev) => ({ ...prev, mrp: e.target.value }))
+                  setData((prev) => ({ ...prev, strikePrice: e.target.value }))
                 }
               />
             </div>
@@ -237,7 +264,7 @@ const AddProduct = () => {
               Description
             </label>
             <div className="bg-white">
-              <HTMLEditor />
+            <HTMLEditor data={description} setData={setDescription} />
             </div>
           </div>
 

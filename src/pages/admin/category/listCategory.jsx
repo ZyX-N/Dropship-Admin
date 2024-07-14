@@ -3,39 +3,52 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Tooptip from "../../../Components/tool-tip/Tooltip";
 import Pagination from "../../../Components/pagination/Pagination";
 import ModalDelete from "../../../Components/modal/delete";
 import ModalEdit from "../../../Components/modal/edit";
 import InputText from "../../../Components/input/Input-text";
 import InputCheckbox from "../../../Components/input/Input-checkbox";
+import { getCall } from "../../../services/apiCall";
+import { getLoginToken } from "../../../services/token";
 
 const ListCategory = () => {
+
+  const token = getLoginToken();
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [data, setData] = useState({
+    title: "",
+    image: null,
+  });
+  const [manualSlug, setManualSlug] = useState(false);
+  const [categoryList, setCategoryList] = useState([]);
 
   const editHandler = () => {
     console.log("Edit submit.");
     setEditOpen(false)
   }
 
-  const [data, setData] = useState({
-    title: "",
-    image: null,
-  });
-
-  const [manualSlug, setManualSlug] = useState(false);
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    console.log(data);
-  };
-
   const fileHandler = (e) => {
     const file = e.target.files[0];
     setData((prev) => ({ ...prev, image: file }));
   };
+
+  const getCategory = async () => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    }
+    let data = await getCall("/category", headers);
+    if (data && data.status) {
+      setCategoryList(data.data);
+    }
+  }
+
+  useEffect(() => {
+    getCategory();
+  }, []);
 
   useMemo(() => {
     if (manualSlug) {
@@ -71,19 +84,20 @@ const ListCategory = () => {
               </tr>
             </thead>
             <tbody>
-              {[1, 2, 3, 4, 5].map((item) => (
+              {categoryList.map((item, index) => (
                 <tr
                   className="font-normal text-md border-b border-gray-500"
-                  key={item}
+                  key={item._id}
                 >
-                  <td className="py-1.5 border-r border-gray-500 pl-2 sm:pl-4">
-                    1
+                  <td className="flex items-center gap-3 py-1.5 border-r border-gray-500 pl-2 sm:pl-4">
+                    <span className={`size-2 rounded-full ${item.isActive ? "bg-green-500" : "bg-red-500"}`}></span>
+                    {index + 1}
                   </td>
                   <td className="py-1.5 border-x border-gray-500 pl-2 sm:pl-4">
-                    Household
+                    {item.title}
                   </td>
                   <td className="py-1.5 border-x border-gray-500 pl-2 sm:pl-4">
-                    household
+                    {item.slug}
                   </td>
                   <td className="py-1.5 border-l border-gray-500 pl-2 sm:pl-4">
                     <span className="flex items-center gap-4">
