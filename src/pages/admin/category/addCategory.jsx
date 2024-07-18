@@ -48,7 +48,7 @@ const AddCategory = () => {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="title"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Title
               </label>
@@ -65,14 +65,14 @@ const AddCategory = () => {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="slug"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Slug
               </label>
               <InputText
                 type="text"
                 id="slug"
-                placeholder="Enter category slug"
+                placeholder={manualSlug ? "Enter category slug" : "Slug will be generated automatically"}
                 value={data.slug || ""}
                 onChange={(e) =>
                   setData((prev) => ({ ...prev, slug: e.target.value }))
@@ -84,7 +84,7 @@ const AddCategory = () => {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="image"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Image
               </label>
@@ -113,7 +113,7 @@ const AddCategory = () => {
             <div className="flex items-end gap-4 row-start-3 md:row-start-auto">
               <label
                 htmlFor="title"
-                className="font-medium text-lg whitespace-nowrap"
+                className="font-medium text-md whitespace-nowrap"
               >
                 Enter slug manually
               </label>
@@ -124,7 +124,7 @@ const AddCategory = () => {
             </div>
             {data.image && (
               <div className="grid-item relative size-72">
-                <button type="button" className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2" onClick={()=>setData((prev)=>({...prev,img:null}))}>
+                <button type="button" className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2" onClick={()=>setData((prev)=>({...prev,image:null}))}>
                   <XMarkIcon className="size-5" />
                 </button>
                 <img

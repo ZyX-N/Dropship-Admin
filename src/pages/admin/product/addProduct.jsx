@@ -9,7 +9,6 @@ import { getCall, postCall } from "../../../services/apiCall";
 import { getLoginToken } from "../../../services/token";
 
 const AddProduct = () => {
-
   const token = getLoginToken();
 
   const [data, setData] = useState({
@@ -20,7 +19,7 @@ const AddProduct = () => {
     image: [],
     rating: 4,
     slug: "",
-    active:true
+    active: true,
   });
 
   const [category, setCategory] = useState({ _id: null, title: null });
@@ -34,36 +33,38 @@ const AddProduct = () => {
     e.preventDefault();
 
     const headers = {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    };
 
     const body = {
-      ...data, ...{ category: category._id, description }
-    }
+      ...data,
+      ...{ category: category._id, description },
+    };
 
     let submitStatus = await postCall("/product", headers, body);
     if (submitStatus && submitStatus.status) {
       // setCategoryList(data.data);
-      alert("Product submitted successfully!")
+      alert("Product submitted successfully!");
     }
-    console.log(submitStatus)
+    console.log(submitStatus);
   };
 
   const fileHandler = (e) => {
-    const file = e.target.files[0];
-    setData((prev) => ({ ...prev, image: file }));
+    const file = e.target.files;
+    setData((prev) => ({ ...prev, image: [...data.image, ...file] }));
   };
-
+  console.log(data);
+  console.log(data.image.length);
   const getCategory = async () => {
     const headers = {
-      Authorization: `Bearer ${token}`
-    }
+      Authorization: `Bearer ${token}`,
+    };
     let data = await getCall("/category/drop-down-list", headers);
 
     if (data && data.status) {
       setCategoryList(data.data);
     }
-  }
+  };
 
   useEffect(() => {
     getCategory();
@@ -95,7 +96,7 @@ const AddProduct = () => {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="title"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Title
               </label>
@@ -113,7 +114,7 @@ const AddProduct = () => {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="category"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Category
               </label>
@@ -129,38 +130,8 @@ const AddProduct = () => {
 
             <div className="flex flex-col gap-1">
               <label
-                htmlFor="image"
-                className="font-medium text-lg tracking-wide"
-              >
-                Image
-              </label>
-              <div className="size-full relative flex border-b-2 border-gray-400">
-                <label
-                  htmlFor="img"
-                  className="border-r-2 border-gray-400 px-6 hover:bg-gray-300 rounded-tl-md flex items-center justify-center cursor-pointer"
-                >
-                  Upload
-                </label>
-                <input
-                  type="text"
-                  className="size-full bg-transparent outline-none py-2 px-6 truncate"
-                  value={data.image?.name || ""}
-                  disabled={true}
-                />
-                <input
-                  type="file"
-                  id="img"
-                  className="hidden"
-                  onChange={fileHandler}
-                  multiple={false}
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label
                 htmlFor="strikePrice"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 MRP
               </label>
@@ -178,7 +149,7 @@ const AddProduct = () => {
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="price"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Price
               </label>
@@ -195,8 +166,26 @@ const AddProduct = () => {
 
             <div className="flex flex-col gap-1">
               <label
+                htmlFor="rating"
+                className="font-medium text-md tracking-wide"
+              >
+                Rating
+              </label>
+              <InputText
+                type="number"
+                id="rating"
+                placeholder="Enter product rating"
+                value={data.rating}
+                onChange={(e) =>
+                  setData((prev) => ({ ...prev, rating: e.target.value }))
+                }
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label
                 htmlFor="stock"
-                className="font-medium text-lg tracking-wide"
+                className="font-medium text-md tracking-wide"
               >
                 Stock
               </label>
@@ -213,27 +202,45 @@ const AddProduct = () => {
 
             <div className="flex flex-col gap-1">
               <label
-                htmlFor="rating"
-                className="font-medium text-lg tracking-wide"
+                htmlFor="image"
+                className="font-medium text-md tracking-wide"
               >
-                Rating
+                Image
               </label>
-              <InputText
-                type="number"
-                id="rating"
-                placeholder="Enter product rating"
-                value={data.rating}
-                onChange={(e) =>
-                  setData((prev) => ({ ...prev, rating: e.target.value }))
-                }
-              />
+              <div className="size-full relative flex border-b-2 border-gray-400">
+                <label
+                  htmlFor="img"
+                  className="border-r-2 border-gray-400 px-6 hover:bg-gray-300 rounded-tl-md flex items-center justify-center cursor-pointer"
+                >
+                  Upload
+                </label>
+                <input
+                  type="text"
+                  className="size-full bg-transparent outline-none py-2 px-6 truncate font-medium"
+                  value={
+                    data.image.length
+                      ? `${data.image.length} Image${
+                          data.image.length > 1 ? "s" : ""
+                        } Uploaded`
+                      : ""
+                  }
+                  disabled={true}
+                />
+                <input
+                  type="file"
+                  id="img"
+                  className="hidden"
+                  onChange={fileHandler}
+                  multiple={true}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-1">
               <div className="flex gap-2">
                 <label
                   htmlFor="slug"
-                  className="font-medium text-lg tracking-wide"
+                  className="font-medium text-md tracking-wide"
                 >
                   Slug
                 </label>
@@ -256,15 +263,41 @@ const AddProduct = () => {
             </div>
           </div>
 
+          {data.image.length > 0 && (
+            <div className="flex flex-wrap gap-6">
+              {data.image.map((item, index) => (
+                <div className="grid-item relative size-40">
+                  <button
+                    type="button"
+                    className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2"
+                    onClick={() =>
+                      setData((prev) => ({
+                        ...prev,
+                        image: data.image.filter((e, idx) => index !== idx),
+                      }))
+                    }
+                  >
+                    <XMarkIcon className="size-5" />
+                  </button>
+                  <img
+                    src={item ? URL.createObjectURL(item) : ""}
+                    alt="Zixen"
+                    className="size-full object-cover border-2 border-black rounded-lg p-0.5"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="flex flex-col gap-1">
             <label
               htmlFor="rating"
-              className="font-medium text-lg tracking-wide"
+              className="font-medium text-md tracking-wide"
             >
               Description
             </label>
             <div className="bg-white">
-            <HTMLEditor data={description} setData={setDescription} />
+              <HTMLEditor setValue={setDescription} />
             </div>
           </div>
 
