@@ -1,25 +1,63 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import InputText from "../../../Components/input/Input-text";
 import InputCheckbox from "../../../Components/input/Input-checkbox";
 import ButtonSave from "../../../Components/button/Submit";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { postCall, postFormDataCall } from "../../../services/apiCall";
+import { getLoginToken } from "../../../services/token";
 
 const AddCategory = () => {
+  const token = getLoginToken();
+
+  const imageBox = useRef(null);
+
   const [data, setData] = useState({
     title: "",
-    image: null,
+    image: ""
   });
 
+  const [image, setImage] = useState(null);
   const [manualSlug, setManualSlug] = useState(false);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(data);
+    const headers = {
+      authorization: `Bearer ${token}`
+    }
+    const body = data;
+    let createStatus = await postCall("/category", headers, body);
+
+    if (createStatus.status) {
+      imageBox.current.value = null;
+      setData({
+        title: "",
+        image: ""
+      });
+      setImage(null);
+    }
+    alert(createStatus.msg);
   };
 
-  const fileHandler = (e) => {
-    const file = e.target.files[0];
-    setData((prev) => ({ ...prev, image: file }));
+  const fileHandler = async (e) => {
+    try {
+      const file = e.target.files[0];
+      const headers = {
+        authorization: `Bearer ${token}`
+      }
+      const body = {
+        file: file
+      }
+      let uploadStatus = await postFormDataCall("/uploads", headers, body);
+
+      if (uploadStatus.status) {
+        setData((prev) => ({ ...prev, image: uploadStatus.data }));
+        setImage(file);
+      } else {
+        alert("Image uplaod failed!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useMemo(() => {
@@ -98,7 +136,7 @@ const AddCategory = () => {
                 <input
                   type="text"
                   className="size-full bg-transparent outline-none py-2 px-6 truncate"
-                  value={data.image?.name || ""}
+                  value={image?.name || ""}
                   disabled={true}
                 />
                 <input
@@ -107,7 +145,15 @@ const AddCategory = () => {
                   className="hidden"
                   onChange={fileHandler}
                   multiple={false}
+                  ref={imageBox}
                 />
+                {image &&
+                  <button type="button" className="absolute right-2 top-2 rounded-full hover:bg-gray-300 p-1" onClick={() => {
+                    imageBox.current.value = null;
+                    setImage(null);
+                    setData((prev) => ({ ...prev, image: "" }));
+                  }}><XMarkIcon className="size-4" /></button>
+                }
               </div>
             </div>
             <div className="flex items-end gap-4 row-start-3 md:row-start-auto">
@@ -122,13 +168,17 @@ const AddCategory = () => {
                 onChange={(e) => setManualSlug(e.target.checked)}
               />
             </div>
-            {data.image && (
+            {image && (
               <div className="grid-item relative size-72">
-                <button type="button" className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2" onClick={()=>setData((prev)=>({...prev,image:null}))}>
+                <button type="button" className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2" onClick={() => {
+                  imageBox.current.value = null;
+                  setImage(null);
+                  setData((prev) => ({ ...prev, image: "" }));
+                }}>
                   <XMarkIcon className="size-5" />
                 </button>
                 <img
-                  src={data.image ? URL.createObjectURL(data.image) : ""}
+                  src={image ? URL.createObjectURL(image) : ""}
                   alt="Zixen"
                   className="size-full object-cover border-2 border-black rounded-lg p-0.5"
                 />

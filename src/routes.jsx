@@ -3,6 +3,7 @@ import AddCategory from "./pages/admin/category/addCategory";
 import ListCategory from "./pages/admin/category/listCategory";
 import AddProduct from "./pages/admin/product/addProduct";
 import ListProduct from "./pages/admin/product/listProduct";
+import Login from "./pages/auth/login";
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -55,7 +56,12 @@ const routes = [
     title: "auth",
     layout: "auth",
     pages: [
-
+      {
+        name: "login",
+        path: "/login",
+        element: <Login />,
+        subPages: []
+      }
     ]
   },
 ];

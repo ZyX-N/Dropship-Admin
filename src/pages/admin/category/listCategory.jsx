@@ -12,6 +12,7 @@ import InputText from "../../../Components/input/Input-text";
 import InputCheckbox from "../../../Components/input/Input-checkbox";
 import { getCall } from "../../../services/apiCall";
 import { getLoginToken } from "../../../services/token";
+import ModalDetails from "../../../Components/modal/details";
 
 const ListCategory = () => {
 
@@ -19,16 +20,67 @@ const ListCategory = () => {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
-  const [data, setData] = useState({
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  const initialData = {
     title: "",
-    image: null,
-  });
+    image: "",
+  };
+  const [data, setData] = useState(initialData);
+
   const [manualSlug, setManualSlug] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
 
   const editHandler = () => {
     console.log("Edit submit.");
     setEditOpen(false)
+  }
+
+  const editCloseHandler = () => {
+    setData(initialData);
+    setEditOpen(false)
+  }
+
+  const detailOpenHandler = async (id) => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    }
+    let data = await getCall(`/category/${id}`, headers);
+    if (data && data.status) {
+      setData({
+        title: data.data.title,
+        slug: data.data.slug,
+        image: data.data.image,
+        isActive: data.data.isActive
+      });
+    }
+    setDetailsOpen(true)
+  }
+
+  const editOpenHandler = async (id) => {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    }
+    let data = await getCall(`/category/${id}`, headers);
+    if (data && data.status) {
+      setData({
+        title: data.data.title,
+        slug: data.data.slug,
+        image: data.data.image,
+        isActive: data.data.isActive
+      });
+    }
+    setEditOpen(true)
+  }
+
+  const detailCloseHandler = () => {
+    setData(initialData);
+    setDetailsOpen(false);
+  }
+
+  const detailHandler = () => {
+    console.log("Details submit!");
+    setDetailsOpen(false)
   }
 
   const fileHandler = (e) => {
@@ -89,7 +141,7 @@ const ListCategory = () => {
                   className="font-normal text-md border-b border-gray-500"
                   key={item._id}
                 >
-                  <td className="flex items-center gap-3 py-1.5 border-r border-gray-500 pl-2 sm:pl-4">
+                  <td className="flex items-center gap-3 py-1.5 pl-2 sm:pl-4">
                     <span className={`size-2 rounded-full ${item.isActive ? "bg-green-500" : "bg-red-500"}`}></span>
                     {index + 1}
                   </td>
@@ -102,13 +154,13 @@ const ListCategory = () => {
                   <td className="py-1.5 border-l border-gray-500 pl-2 sm:pl-4">
                     <span className="flex items-center gap-4">
                       <Tooptip message="View">
-                        <button type="button">
+                        <button type="button" onClick={() => detailOpenHandler(item._id)}>
                           <EyeIcon className="size-6 text-green-800" />
                         </button>
                       </Tooptip>
 
                       <Tooptip message="Edit">
-                        <button type="button" onClick={() => setEditOpen(true)}>
+                        <button type="button" onClick={() => editOpenHandler(item._id)}>
                           <PencilSquareIcon className="size-6 text-blue-700" />
                         </button>
                       </Tooptip>
@@ -132,7 +184,7 @@ const ListCategory = () => {
 
       <ModalDelete title="Category" open={deleteOpen} setOpen={setDeleteOpen} />
 
-      <ModalEdit title="Edit Category" open={editOpen} setOpen={setEditOpen} onSave={editHandler}>
+      <ModalEdit title="Edit Category" open={editOpen} setOpen={setEditOpen} onSave={editHandler} closeFn={editCloseHandler}>
         <div className="size-full grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-1">
             <label
@@ -211,7 +263,7 @@ const ListCategory = () => {
               onChange={(e) => setManualSlug(e.target.checked)}
             />
           </div>
-          {data.image && (
+          {editOpen && data.image && (
             <div className="grid-item">
               <img
                 src={data.image ? URL.createObjectURL(data.image) : ""}
@@ -222,6 +274,53 @@ const ListCategory = () => {
           )}
         </div>
       </ModalEdit>
+
+      <ModalDetails title="Category Details" open={detailsOpen} setOpen={setDetailsOpen} closeFn={detailCloseHandler}>
+        <div className="size-full grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="flex flex-col gap-1">
+            <label
+              className="font-medium text-base tracking-wide"
+            >
+              Title
+            </label>
+            <InputText
+              type="text"
+              value={data.title}
+              disabled={true}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label
+              className="font-medium text-base tracking-wide"
+            >
+              Slug
+            </label>
+            <InputText
+              type="text"
+              value={data.slug || ""}
+              disabled={true}
+            />
+          </div>
+          {data.image && (
+            <div className="grid-item">
+              <img
+                src={data.image ? data.image.url : ""}
+                alt="Zixen"
+                className="size-40 object-cover border-2 border-black rounded-lg p-0.5"
+              />
+            </div>
+          )}
+          <div className="flex items-start gap-4 row-start-3 md:row-start-auto">
+            <label
+              className="font-medium text-base whitespace-nowrap"
+            >
+              Active
+            </label>
+            <span className={`size-3 rounded-full mt-1.5 ${data?.isActive ? "bg-green-600" : "bg-red-600"}`}></span>
+          </div>
+
+        </div>
+      </ModalDetails>
 
     </>
   );
