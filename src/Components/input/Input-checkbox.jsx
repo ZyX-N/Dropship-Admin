@@ -7,7 +7,7 @@ const InputCheckbox = ({ id, classes, containerClasses, onChange, value }) => {
         className={`size-full bg-transparent outline-none p-2 border-b-2 border-gray-400 focus:border-transparent ${
           classes || ""
         }`}
-        value={value}
+        checked={value}
         onChange={onChange || null}
       />
     </div>

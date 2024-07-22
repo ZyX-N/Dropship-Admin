@@ -7,7 +7,7 @@ function App() {
   return (
     <Routes>
       <Route path="/admin/*" element={<Admin />} />
-      <Route path="/auth/*" element={<Auth />} />
+      <Route path="/auth/login" element={<Auth />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Routes>
   );

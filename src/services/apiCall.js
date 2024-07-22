@@ -31,6 +31,21 @@ export const postCall = async (endPoint, customHeaders = {}, body = {}) => {
     }
 }
 
+export const putCall = async (endPoint, customHeaders = {}, body = {}) => {
+    try {
+        let fetchedData = await fetch(`${developmentUrl}${endPoint}`, {
+            method: "PUT",
+            headers: { ...headers, ...customHeaders },
+            body: JSON.stringify(body)
+        });
+        let parsedData = await fetchedData.json();
+        return parsedData;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 export const postFormDataCall = async (endPoint, customHeaders = {}, body = {}) => {
     try {
         const myHeaders = new Headers();
@@ -45,6 +60,20 @@ export const postFormDataCall = async (endPoint, customHeaders = {}, body = {}) 
             method: "POST",
             headers: myHeaders,
             body: formdata
+        });
+        let parsedData = await fetchedData.json();
+        return parsedData;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+export const deleteCall = async (endPoint, customHeaders = {}) => {
+    try {
+        let fetchedData = await fetch(`${developmentUrl}${endPoint}`, {
+            method: "DELETE",
+            headers: { ...headers, ...customHeaders }
         });
         let parsedData = await fetchedData.json();
         return parsedData;

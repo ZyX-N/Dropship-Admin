@@ -1,12 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import routes from "../routes";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { ArrowLeftIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import Navbar from "../Components/navbar/Navbar";
 import { TbPoint } from "react-icons/tb";
 import Breadcrumb from "../Components/breadcrumb/Breadcrumb";
+import { getLoginToken } from "../services/token";
 
 const Admin = () => {
+  const token = getLoginToken();
+  const navigate = useNavigate();
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   // const [breadcrumbData, setBreadcrumbData] = useState([
   //   { title: 'Admin', path: '/admin/dashboard' },
@@ -30,6 +34,14 @@ const Admin = () => {
       btn.lastChild.classList.remove("rotate-180");
     }
   };
+
+  const checkLogin = () => {
+    if (!token) navigate("/auth/login");
+  };
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
   return (
     <main className="h-screen flex justify-between relative">
@@ -135,7 +147,7 @@ const Admin = () => {
           <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         </div>
 
-        <div className="">
+        <div className="bg-white px-8 py-6 rounded-xl shadow-xl">
           <Routes>
             {routes?.map(
               ({ layout, pages }) =>
