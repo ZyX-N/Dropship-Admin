@@ -7,6 +7,7 @@ const InputDropdown = ({
   value,
   setValue,
   option = [],
+  disable = false,
 }) => {
   const [showOption, setShowOption] = useState(false);
 
@@ -20,7 +21,7 @@ const InputDropdown = ({
         className={`size-full bg-transparent outline-none px-2 h-10 flex justify-start items-center cursor-pointer ${
           classes || ""
         }`}
-        onClick={() => setShowOption(!showOption)}
+        onClick={() => !disable && setShowOption(!showOption)}
       >
         {value}
       </div>
@@ -29,10 +30,10 @@ const InputDropdown = ({
         className={`absolute right-2 top-1/2 -translate-y-1/2 size-5 cursor-pointer transition-all ${
           showOption && "rotate-180"
         }`}
-        onClick={() => setShowOption(!showOption)}
+        onClick={() => !disable && setShowOption(!showOption)}
       />
 
-      {showOption && (
+      {!disable && showOption && (
         <ul className="flex flex-col w-full z-10 absolute top-[calc(100%+5px)] rounded-md divide-y divide-gray-400 bg-white border border-gray-400 max-h-[247px] overflow-y-auto shadow-2xl">
           {option.length > 0 ? (
             option.map((item) => (

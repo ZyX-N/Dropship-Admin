@@ -1,7 +1,7 @@
 import React from "react";
 import SunEditor from "suneditor-react";
 import "suneditor/dist/css/suneditor.min.css";
-const HTMLEditor = ({setValue}) => {
+const HTMLEditor = ({setValue,setContents=null}) => {
 
   const onChangeHandler = (htmlText) =>{
     setValue(htmlText);
@@ -9,7 +9,7 @@ const HTMLEditor = ({setValue}) => {
 
   return (
     <div>
-      <SunEditor onChange={onChangeHandler} />
+      <SunEditor onChange={onChangeHandler} setContents={setContents} />
     </div>
   );
 };
