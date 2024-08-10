@@ -39,15 +39,10 @@ const AddProduct = () => {
     const headers = {
       Authorization: `Bearer ${token}`,
     };
-
     const body = {
       ...data,
       ...{ category: category._id, description },
     };
-
-    console.log(body);
-    console.log(uploadedImage);
-
     let submitStatus = await postCall("/product", headers, body);
     if (submitStatus && submitStatus.status) {
       setData(initialValue);
@@ -70,7 +65,8 @@ const AddProduct = () => {
           authorization: `Bearer ${token}`,
         };
         const body = {
-          file: file,
+          file: file, 
+
         };
         let uploadStatus = await postFormDataCall("/uploads", headers, body);
 
@@ -99,7 +95,6 @@ const AddProduct = () => {
       Authorization: `Bearer ${token}`,
     };
     let data = await getCall("/category/drop-down-list", headers);
-
     if (data && data.status) {
       setCategoryList(data.data);
     }

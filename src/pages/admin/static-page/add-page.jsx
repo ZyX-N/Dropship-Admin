@@ -9,8 +9,12 @@ import HTMLEditor from "../../../Components/input/editor";
 import Toast from "../../../Components/toast/toast";
 import { toast } from "react-toastify";
 
+
 const AddPage = () => {
   const token = getLoginToken();
+  const [image, setImage] = useState(null);
+  const [template, setTemplate] = useState("");
+  const [manualSlug, setManualSlug] = useState(false);
 
   const imageBox = useRef(null);
 
@@ -19,28 +23,38 @@ const AddPage = () => {
     image: "",
   });
 
-  const [image, setImage] = useState(null);
-  const [template, setTemplate] = useState("");
-  const [manualSlug, setManualSlug] = useState(false);
-
   const submitHandler = async (e) => {
     e.preventDefault();
-    const headers = {
-      authorization: `Bearer ${token}`,
-    };
-    const body = data;
-    let createStatus = await postCall("/category", headers, body);
+    try {
+      const response = await fetch("http://13.127.50.182:5000/api/admin/static-page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          "title": data.title,
+          "image": data.image,
+          template: template,
+          manualSlug: manualSlug,
+        })
+      })
+      const json = await response.json();
+      if (json.status) {
+        setData({
+          title: "",
+          image: null,
+        })
+        setTemplate("")
+console.log('template', template)
 
-    if (createStatus.status) {
-      imageBox.current.value = null;
-      setData({
-        title: "",
-        image: "",
-      });
-      setImage(null);
-      toast.success(createStatus.msg);
-    } else {
-      toast.error(createStatus.msg);
+      } else {
+        toast.error("error")
+      }
+      console.log('json', json)
+    } catch (error) {
+      console.log(error);
+      return null
     }
   };
 
@@ -82,8 +96,9 @@ const AddPage = () => {
     <>
       <Toast />
       <section className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4">
+        <div className="flex justify-between items-center gap-4">
           <h1 className="text-2xl font-semibold capitalize">add static page</h1>
+          {/* <Search /> */}
         </div>
 
         <div className="w-full py-4">
@@ -216,7 +231,7 @@ const AddPage = () => {
                 Template
               </label>
               <div className="bg-white">
-                <HTMLEditor setValue={setTemplate} />
+                <HTMLEditor setValue={setTemplate} setContents={template} />
               </div>
             </div>
             <div>

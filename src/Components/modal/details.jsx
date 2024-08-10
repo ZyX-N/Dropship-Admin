@@ -6,7 +6,6 @@ const ModalDetails = ({ children, title, open, setOpen, closeFn = null }) => {
         <div className={`${open ? "scale-100 w-screen h-screen right-0" : "scale-0 size-0 right-1/2"} bg-opacity-60 flex justify-center items-center z-40 bg-gray-700 absolute bottom-0 overflow-hidden transition-all duration-500 ease-in-out md:px-0 px-8`}>
 
             <div className={`transition-all duration-500 ease-in-out relative transform overflow-hidden rounded-lg bg-white flex flex-col justify-between text-left shadow-xl w-full md:w-full md:max-w-3xl max-h-[90%] z-50`}>
-
                 <div className="bg-white border-b p-4">
                     <h3 className="text-xl font-semibold leading-6 text-gray-900">{title}</h3>
                 </div>

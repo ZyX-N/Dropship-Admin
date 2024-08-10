@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import HTMLEditor from "../../../Components/input/editor";
 import ModalDetails from "../../../Components/modal/details";
 import Toast from "../../../Components/toast/toast";
+import Search from "../../../Components/search/Search";
 
 const ListProduct = () => {
   const token = getLoginToken();
@@ -41,7 +42,7 @@ const ListProduct = () => {
 
   const [data, setData] = useState(initialData);
 
-  const [category, setCategory] = useState({ _id: null, title: null });
+  const [category, setCategory] = useState({ _id: null, title: "" });
   const [description, setDescription] = useState("");
 
   const [uploadedImage, setUploadedImage] = useState([]);
@@ -55,17 +56,27 @@ const ListProduct = () => {
   const [productList, setProductList] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  let count = 10;
+  let [search, setSearch] = useState("")
+  const [totalCount, setTotalCount] = useState(null)
+  const [page, setPage] = useState(1)
+
+  console.log("product list ", productList)
   const getProduct = async () => {
     const headers = {
       Authorization: `Bearer ${token}`,
     };
-    let data = await getCall("/product", headers);
+    let data = await getCall(`/product?page=${page}&count=${count}&search=${search}&all=false`, headers);
     if (data && data.status) {
       setProductList(data.data);
+      setTotalCount(data.totalCount)
       setLoading(false);
     }
   };
 
+  const handleSearch = () => {
+    getProduct()
+  }
   const getCategory = async () => {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -76,7 +87,8 @@ const ListProduct = () => {
       setCategoryList(data.data);
     }
   };
-
+console.log('category', category)
+console.log('categoryList', categoryList)
   const fileHandler = async (e) => {
     try {
       const files = e.target.files;
@@ -111,13 +123,12 @@ const ListProduct = () => {
     }
   };
 
-  // ****************** Edit start ******************
+  //****************** Edit start ******************
   const editOpenHandler = async (id) => {
     const headers = {
       Authorization: `Bearer ${token}`,
     };
     let data = await getCall(`/product/${id}`, headers);
-
     if (data && data.status) {
       setData({
         id: id,
@@ -129,9 +140,12 @@ const ListProduct = () => {
         stock: data.data.stock,
         strikePrice: data.data.strikePrice,
       });
-      setCategory(data.data.category);
+      setCategory(data.data.categoryList);
       setDescription(data.data.description);
       // setCurrImage(data.data.image || "");
+      console.log('data.data', data.data)
+      console.log('data.data Category : ', categoryList)
+      
     }
     setEditOpen(true);
   };
@@ -145,19 +159,9 @@ const ListProduct = () => {
     if (!manualSlug) {
       const { slug, ...rest } = data;
       body = { ...rest, description };
+      toast.success(body.mag)
     }
-
     console.log(body);
-    // let editStatus = await putCall(`/category/${id}`, headers, body);
-    // if (editStatus && editStatus.status) {
-    //   toast.success(editStatus.msg);
-    //   setData(initialData);
-    //   getCategory();
-    //   setEditOpen(false);
-    // } else {
-    //   setLoading(false);
-    //   toast.error(editStatus.msg);
-    // }
   };
 
   const editCloseHandler = () => {
@@ -233,6 +237,11 @@ const ListProduct = () => {
     getCategory();
   }, []);
 
+  useEffect(() => {
+    setLoading(true);
+    getProduct();
+  }, [page]);
+
   useMemo(() => {
     if (manualSlug) {
       setData((prev) => ({ ...prev, slug: "" }));
@@ -247,8 +256,9 @@ const ListProduct = () => {
   return (
     <>
       <section className="flex flex-col gap-4">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold capitalize">list product</h1>
+        <div className="flex justify-between items-center  w-full  gap-4">
+          <h1 className="text-2xl w-[30%] font-semibold capitalize">list product</h1>
+          <Search search={search} setSearch={setSearch} handleSearch={handleSearch}  />
         </div>
 
         <div className="w-full pt-4 flex flex-col gap-6 items-center">
@@ -259,16 +269,16 @@ const ListProduct = () => {
               <table className="w-full ">
                 <thead>
                   <tr className="font-semibold text-lg border-y-2 border-gray-800">
-                    <td className="whitespace-nowrap py-2 sm:pl-4 lg:w-[100px]">
+                    <td className="whitespace-nowrap py-1 sm:pl-4 lg:w-[100px]">
                       Sl No.
                     </td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Title</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Category</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">MRP</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Price</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Stock</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Rating</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4 lg:w-[200px]">
+                    <td className="whitespace-nowrap py-1 sm:pl-4">Title</td>
+                    <td className="whitespace-nowrap py-1 sm:pl-4">Category</td>
+                    <td className="whitespace-nowrap py-1 sm:pl-4">MRP</td>
+                    <td className="whitespace-nowrap py-1 sm:pl-4">Price</td>
+                    <td className="whitespace-nowrap py-1 sm:pl-4">Stock</td>
+                    <td className="whitespace-nowrap py-1 sm:pl-4">Rating</td>
+                    <td className="whitespace-nowrap py-1 sm:pl-4 lg:w-[200px]">
                       Action
                     </td>
                   </tr>
@@ -279,14 +289,13 @@ const ListProduct = () => {
                       className="font-normal text-md border-b border-gray-500"
                       key={item._id}
                     >
-                      {/* <td className="py-1.5 border-r border-gray-500 px-1 sm:px-2"> */}
+
                       <td className="flex items-center gap-3 py-1.5 pl-2 sm:pl-4">
                         <span
-                          className={`size-2 rounded-full ${
-                            item.isActive ? "bg-green-500" : "bg-red-500"
-                          }`}
+                          className={`size-2 rounded-full ${item.isActive ? "bg-green-500" : "bg-red-500"
+                            }`}
                         ></span>
-                        {index + 1}
+                        {(page - 1) * count + index + 1}
                       </td>
                       <td className="py-1.5 border-x border-gray-500 px-1 sm:px-2">
                         {item.title ?? "N/A"}
@@ -341,7 +350,7 @@ const ListProduct = () => {
                 </tbody>
               </table>
               <div className="w-full flex justify-end">
-                <Pagination />
+                <Pagination count={count} page={page} setPage={setPage} totalCount={totalCount} />
               </div>
             </>
           )}
@@ -355,7 +364,6 @@ const ListProduct = () => {
         onClose={deleteCloseHandler}
         onDelete={deleteHandler}
       />
-
       <ModalEdit
         title="Edit Product"
         open={editOpen}
@@ -376,8 +384,7 @@ const ListProduct = () => {
               id="title"
               placeholder="Enter product title"
               value={data.title}
-              onChange={(e) =>
-                setData((prev) => ({ ...prev, title: e.target.value }))
+              onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))
               }
             />
           </div>
@@ -393,7 +400,7 @@ const ListProduct = () => {
               type="text"
               id="category"
               placeholder="Select product category"
-              value={category.title}
+              value={categoryList.title}
               setValue={setCategory}
               option={categoryList}
             />
@@ -609,7 +616,7 @@ const ListProduct = () => {
             <InputDropdown
               type="text"
               placeholder="Select product category"
-              value={category.title}
+              value={categoryList.title}
               disable={true}
             />
           </div>

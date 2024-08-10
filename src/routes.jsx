@@ -6,6 +6,7 @@ import ListProduct from "./pages/admin/product/listProduct";
 import Login from "./pages/auth/login";
 import AddPage from "./pages/admin/static-page/add-page";
 import ListPage from "./pages/admin/static-page/list-page";
+import General from "./pages/admin/general";
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -20,7 +21,13 @@ const routes = [
         name: "dashboard",
         path: "/dashboard",
         element: <Dashboard />,
-        subPages: [],
+
+      },
+      {
+        name: "general Settings",
+        path: "/general-settings",
+        element: <General/>,
+        
       },
       {
         name: "category",

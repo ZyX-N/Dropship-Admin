@@ -22,6 +22,7 @@ import ModalDetails from "../../../Components/modal/details";
 import ThreeDotSpinner from "../../../Components/spinner/Page";
 import Toast from "../../../Components/toast/toast";
 import { toast } from "react-toastify";
+import Search from "../../../Components/search/Search";
 
 const ListCategory = () => {
   const token = getLoginToken();
@@ -38,12 +39,13 @@ const ListCategory = () => {
   const [data, setData] = useState(initialData);
 
   const [currImage, setCurrImage] = useState(null);
-  const [uploadedimage, setUploadedImage] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState(null);
   const [manualSlug, setManualSlug] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // ****************** Edit start ******************
+
   const editOpenHandler = async (id) => {
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -68,28 +70,23 @@ const ListCategory = () => {
       Authorization: `Bearer ${token}`,
     };
     let body = data;
-
-    if (!manualSlug) {
-      const { slug, ...rest } = data;
-      body = rest;
-    }
-
     let editStatus = await putCall(`/category/${id}`, headers, body);
     if (editStatus && editStatus.status) {
-      toast.success(editStatus.msg);
       setData(initialData);
       getCategory();
+      toast.success(editStatus.msg); 
       setEditOpen(false);
     } else {
       setLoading(false);
-      toast.error(editStatus.msg);
+      toast.error(editStatus.msg); 
     }
   };
-
+git 
   const editCloseHandler = () => {
     setData(initialData);
     setEditOpen(false);
   };
+
   // ****************** Edit end ******************
 
   // ****************** Details start ******************
@@ -115,6 +112,7 @@ const ListCategory = () => {
     setData(initialData);
     setDetailsOpen(false);
   };
+
   // ****************** Details end ******************
 
   // ****************** Delete start ******************
@@ -124,16 +122,16 @@ const ListCategory = () => {
   };
 
   const deleteHandler = async (id) => {
-    setLoading(true);
+    // setLoading(true);
     const headers = {
       Authorization: `Bearer ${token}`,
     };
 
     let deleteStatus = await deleteCall(`/category/${id}`, headers);
+
     if (deleteStatus && deleteStatus.status) {
       toast.success(deleteStatus.msg);
       setData(initialData);
-      getCategory();
       setDeleteOpen(false);
     } else {
       setLoading(false);
@@ -199,13 +197,14 @@ const ListCategory = () => {
     }
   }, [manualSlug]);
 
+  const [page, setPage] = useState(1)
   return (
     <>
       <section className="flex flex-col gap-4">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold capitalize">list category</h1>
+        <div className="flex justify-between items-center gap-4  w-full ">
+          <h1 className="text-2xl font-semibold capitalize w-[20%]" >list category</h1>
+          <Search />
         </div>
-
         <div className="w-full pt-4 flex flex-col gap-6 items-center">
           {loading ? (
             <ThreeDotSpinner />
@@ -213,13 +212,13 @@ const ListCategory = () => {
             <>
               <table className="w-full">
                 <thead>
-                  <tr className="font-semibold text-lg border-y-2 border-gray-800">
-                    <td className="whitespace-nowrap py-2 sm:pl-4 lg:w-[100px]">
+                  <tr className="font-semibold text-lg py-1 border-y-2 border-gray-800">
+                    <td className="whitespace-nowrap  sm:pl-4 lg:w-[100px]">
                       Sl No.
                     </td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Title</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4">Slug</td>
-                    <td className="whitespace-nowrap py-2 sm:pl-4 lg:w-[200px]">
+                    <td className="whitespace-nowrap sm:pl-4">Title</td>
+                    <td className="whitespace-nowrap sm:pl-4">Slug</td>
+                    <td className="whitespace-nowrap sm:pl-4 lg:w-[200px]">
                       Action
                     </td>
                   </tr>
@@ -232,9 +231,8 @@ const ListCategory = () => {
                     >
                       <td className="flex items-center gap-3 py-1.5 pl-2 sm:pl-4">
                         <span
-                          className={`size-2 rounded-full ${
-                            item.isActive ? "bg-green-500" : "bg-red-500"
-                          }`}
+                          className={`size-2 rounded-full ${item.isActive ? "bg-green-500" : "bg-red-500"
+                            }`}
                         ></span>
                         {index + 1}
                       </td>
@@ -279,7 +277,7 @@ const ListCategory = () => {
                 </tbody>
               </table>
               <div className="w-full flex justify-end">
-                <Pagination />
+                <Pagination page={page} setPage={setPage} DataList={categoryList} />
               </div>
             </>
           )}
@@ -361,7 +359,7 @@ const ListCategory = () => {
               <input
                 type="text"
                 className="size-full bg-transparent outline-none py-2 px-6 truncate"
-                value={uploadedimage?.name || ""}
+                value={uploadedImage?.name || ""}
                 disabled={true}
               />
               <input
@@ -372,7 +370,7 @@ const ListCategory = () => {
                 multiple={false}
                 ref={imageBox}
               />
-              {uploadedimage && (
+              {uploadedImage && (
                 <button
                   type="button"
                   className="absolute right-2 top-2 rounded-full hover:bg-gray-300 p-1"
@@ -406,10 +404,10 @@ const ListCategory = () => {
             />
           </div>
           <div className="grid-item">
-            {editOpen && uploadedimage && (
+            {editOpen && uploadedImage && (
               <>
                 <img
-                  src={uploadedimage ? URL.createObjectURL(uploadedimage) : ""}
+                  src={uploadedImage ? URL.createObjectURL(uploadedImage) : ""}
                   alt="Zixen"
                   className="size-40 object-cover border-2 border-black rounded-lg p-0.5"
                 />
@@ -459,9 +457,8 @@ const ListCategory = () => {
               Active
             </label>
             <span
-              className={`border border-black size-3 rounded-full mt-1.5 ${
-                data?.active ? "bg-green-600" : "bg-red-600"
-              }`}
+              className={`border border-black size-3 rounded-full mt-1.5 ${data?.active ? "bg-green-600" : "bg-red-600"
+                }`}
             ></span>
           </div>
         </div>

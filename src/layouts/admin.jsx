@@ -39,9 +39,9 @@ const Admin = () => {
     if (!token) navigate("/auth/login");
   };
 
-  useEffect(() => {
-    checkLogin();
-  }, []);
+  // useEffect(() => {
+  //   checkLogin();
+  // }, []);
 
   return (
     <main className="h-screen flex justify-between relative">

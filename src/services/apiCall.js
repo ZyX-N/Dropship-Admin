@@ -8,6 +8,7 @@ export const getCall = async (endPoint, customHeaders = {}) => {
             method: "GET",
             headers: { ...headers, ...customHeaders }
         });
+        
         let parsedData = await fetchedData.json();
         return parsedData;
     } catch (error) {
