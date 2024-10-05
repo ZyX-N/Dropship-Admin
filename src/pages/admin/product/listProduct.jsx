@@ -16,6 +16,7 @@ import {
   deleteCall,
   getCall,
   postFormDataCall,
+  putCall,
 } from "../../../services/apiCall";
 import ThreeDotSpinner from "../../../Components/spinner/Page";
 import InputDropdown from "../../../Components/input/input-dropdown";
@@ -92,11 +93,10 @@ const ListProduct = () => {
         let uploadStatus = await postFormDataCall("/uploads", headers, body);
 
         if (uploadStatus.status) {
-          setData((prev) => ({
+          setUploadedImage((prev) => [
             ...prev,
-            image: [...prev.image, uploadStatus.data],
-          }));
-          setUploadedImage((prev) => [...prev, file]);
+            { _id: uploadStatus.data, file: file },
+          ]);
           uploadCount++;
         } else {
           toast.error(`${uploadStatus.msg} \nFilename : ${file.name}`);
@@ -120,10 +120,10 @@ const ListProduct = () => {
 
     if (data && data.status) {
       setData({
-        id: id,
+        id: data.data._id,
         title: data.data.title,
         slug: data.data.slug,
-        // image: data.data?.image?._id || null,
+        image: data.data?.image,
         active: data.data.isActive,
         price: data.data.price,
         stock: data.data.stock,
@@ -131,33 +131,41 @@ const ListProduct = () => {
       });
       setCategory(data.data.category);
       setDescription(data.data.description);
-      // setCurrImage(data.data.image || "");
     }
     setEditOpen(true);
   };
 
   const editHandler = async (id) => {
-    // setLoading(true);
     const headers = {
       Authorization: `Bearer ${token}`,
     };
-    let body = { ...data, description };
+
+    let finalImgs = data.image.map((e) => e._id);
+    finalImgs = Array.from(
+      new Set(finalImgs.concat(uploadedImage.map((e) => e._id)))
+    );
+
+    let body = {
+      ...data,
+      description,
+      image: finalImgs,
+      category: category._id,
+    };
     if (!manualSlug) {
       const { slug, ...rest } = data;
-      body = { ...rest, description };
+
+      body = { ...rest, description, image: finalImgs, category: category._id };
     }
 
-    console.log(body);
-    // let editStatus = await putCall(`/category/${id}`, headers, body);
-    // if (editStatus && editStatus.status) {
-    //   toast.success(editStatus.msg);
-    //   setData(initialData);
-    //   getCategory();
-    //   setEditOpen(false);
-    // } else {
-    //   setLoading(false);
-    //   toast.error(editStatus.msg);
-    // }
+    let editStatus = await putCall(`/product/${id}`, headers, body);
+    if (editStatus && editStatus.status) {
+      toast.success(editStatus.msg);
+      setData(initialData);
+      getProduct();
+      setEditOpen(false);
+    } else {
+      toast.error(editStatus.msg);
+    }
   };
 
   const editCloseHandler = () => {
@@ -175,10 +183,10 @@ const ListProduct = () => {
 
     if (data && data.status) {
       setData({
-        // id: id,
+        id: data.data._id,
         title: data.data.title,
         slug: data.data.slug,
-        // image: data.data?.image?._id || null,
+        image: data.data?.image,
         active: data.data.isActive,
         price: data.data.price,
         stock: data.data.stock,
@@ -186,7 +194,6 @@ const ListProduct = () => {
       });
       setCategory(data.data.category);
       setDescription(data.data.description);
-      // setCurrImage(data.data.image || "");
     }
     setDetailsOpen(true);
   };
@@ -362,6 +369,7 @@ const ListProduct = () => {
         setOpen={setEditOpen}
         onSave={editHandler}
         onClose={editCloseHandler}
+        id={data?.id}
       >
         <div className="size-full grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex flex-col gap-1">
@@ -547,32 +555,64 @@ const ListProduct = () => {
         </div>
 
         {uploadedImage.length > 0 && (
-          <div className="flex flex-wrap gap-6">
-            {uploadedImage.map((item, index) => (
-              <div className="grid-item relative size-40" key={item.name}>
-                <button
-                  type="button"
-                  className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2"
-                  onClick={() => {
-                    setData((prev) => ({
-                      ...prev,
-                      image: data.image.filter((e, idx) => index !== idx),
-                    }));
+          <div className="flex flex-col mt-6 gap-2">
+            <div className="font-medium text-md">Recent Uploaded Images</div>
+            <div className="flex flex-wrap gap-4 p-2 bg-gray-200 rounded-lg">
+              {uploadedImage.map((item, index) => (
+                <div className="grid-item relative size-40" key={item._id}>
+                  <button
+                    type="button"
+                    className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2"
+                    onClick={() => {
+                      setData((prev) => ({
+                        ...prev,
+                        image: data.image.filter((e) => e._id !== item._id),
+                      }));
 
-                    setUploadedImage(
-                      uploadedImage.filter((e, idx) => index !== idx)
-                    );
-                  }}
-                >
-                  <XMarkIcon className="size-5" />
-                </button>
-                <img
-                  src={item ? URL.createObjectURL(item) : ""}
-                  alt="Zixen"
-                  className="size-full object-cover border-2 border-black rounded-lg p-0.5"
-                />
-              </div>
-            ))}
+                      setUploadedImage(
+                        uploadedImage.filter((e, idx) => index !== idx)
+                      );
+                    }}
+                  >
+                    <XMarkIcon className="size-5" />
+                  </button>
+                  <img
+                    src={item ? URL.createObjectURL(item.file) : ""}
+                    alt="Zixen"
+                    className="size-full object-cover border-2 border-black rounded-lg p-0.5"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {data.image?.length > 0 && (
+          <div className="flex flex-col mt-6 gap-2">
+            <div className="font-medium text-md">Saved Images</div>
+            <div className="flex flex-wrap gap-4 p-2 bg-gray-200 rounded-lg">
+              {data.image.map((item, index) => (
+                <div className="grid-item relative size-40" key={item._id}>
+                  <button
+                    type="button"
+                    className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2"
+                    onClick={() => {
+                      setData((prev) => ({
+                        ...prev,
+                        image: data.image.filter((e, idx) => index !== idx),
+                      }));
+                    }}
+                  >
+                    <XMarkIcon className="size-5" />
+                  </button>
+                  <img
+                    src={item.url || ""}
+                    alt="Zixen"
+                    className="size-full object-cover border-2 border-black rounded-lg p-0.5"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -685,33 +725,26 @@ const ListProduct = () => {
           </div>
         </div>
 
-        {uploadedImage.length > 0 && (
-          <div className="flex flex-wrap gap-6">
-            {uploadedImage.map((item, index) => (
-              <div className="grid-item relative size-40" key={item.name}>
-                <button
-                  type="button"
-                  className="rounded-full border-2 border-black bg-white p-0.5 absolute right-2 top-2"
-                  onClick={() => {
-                    setData((prev) => ({
-                      ...prev,
-                      image: data.image.filter((e, idx) => index !== idx),
-                    }));
-
-                    setUploadedImage(
-                      uploadedImage.filter((e, idx) => index !== idx)
-                    );
-                  }}
-                >
-                  <XMarkIcon className="size-5" />
-                </button>
-                <img
-                  src={item ? URL.createObjectURL(item) : ""}
-                  alt="Zixen"
-                  className="size-full object-cover border-2 border-black rounded-lg p-0.5"
-                />
-              </div>
-            ))}
+        {data.image?.length > 0 && (
+          <div className="flex flex-col mt-6 gap-2">
+            <div className="font-medium text-md">Product Images</div>
+            <div className="flex flex-wrap gap-4 p-2 bg-gray-200 rounded-lg">
+              {data.image.map((item) => (
+                <div className="grid-item relative size-40" key={item._id}>
+                  <a
+                    href={item.url || ""}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={item.url || ""}
+                      alt="Zixen"
+                      className="size-full object-cover border-2 border-black rounded-lg p-0.5"
+                    />
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -719,7 +752,7 @@ const ListProduct = () => {
           <label htmlFor="rating" className="font-medium text-md tracking-wide">
             Description
           </label>
-          <div className="bg-white border-t border-gray-300">
+          <div className="bg-white border-t border-gray-300 pt-2">
             <div
               className="rounded-md"
               dangerouslySetInnerHTML={{ __html: description || "" }}
