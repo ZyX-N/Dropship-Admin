@@ -6,6 +6,8 @@ import ListProduct from "./pages/admin/product/listProduct";
 import Login from "./pages/auth/login";
 import AddPage from "./pages/admin/static-page/add-page";
 import ListPage from "./pages/admin/static-page/list-page";
+import State from "./pages/admin/location/state";
+// import City from "./pages/admin/location/city";
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -49,6 +51,27 @@ const routes = [
             name: "List Product",
             path: "/list-product",
             element: <ListProduct />,
+          },
+        ],
+      },
+      {
+        name: "location",
+        subPages: [
+          {
+            name: "State",
+            path: "/state",
+            element: <State />,
+          },
+          {
+            name: "City",
+            path: "/city",
+            // element: <City />,
+            element: <>City</>,
+          },
+          {
+            name: "Pincode",
+            path: "/pincode",
+            element: <ListPage />,
           },
         ],
       },
