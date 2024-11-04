@@ -286,7 +286,7 @@ const Pincode = () => {
                   type="text"
                   id="pincode"
                   placeholder="Enter pincode"
-                  value={data.name}
+                  value={data.code}
                   onChange={(e) =>
                     setData((prev) => ({ ...prev, code: e.target.value }))
                   }

@@ -10,6 +10,7 @@ import { getLoginToken } from "../services/token";
 const Admin = () => {
   const token = getLoginToken();
   const navigate = useNavigate();
+  const currentPath = window.location.pathname;
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   // const [breadcrumbData, setBreadcrumbData] = useState([
@@ -49,7 +50,7 @@ const Admin = () => {
       <div
         className={`${
           sidebarOpen ? "left-0" : "-left-[300px]"
-        } absolute top-0 bg-white w-[300px] flex flex-col transition-all duration-500 z-20`}
+        } absolute top-0 bg-white w-[300px] flex flex-col transition-all duration-500 z-30`}
       >
         <div className="w-full h-[80px] flex items-center justify-center relative">
           <h1 className="text-xl font-medium text-gray-800">Admin</h1>
@@ -94,27 +95,39 @@ const Admin = () => {
                                   className="text-gray-600 flex gap-2 items-center"
                                   to={`/${layout}${item.path}`}
                                   onMouseEnter={(e) => {
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "fill",
-                                      "#1e88e5"
-                                    );
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "stroke",
-                                      "#1e88e5"
-                                    );
+                                    if (
+                                      `/${layout}${item.path}` !== currentPath
+                                    ) {
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "fill",
+                                        "#1e88e5"
+                                      );
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "stroke",
+                                        "#1e88e5"
+                                      );
+                                    }
                                   }}
                                   onMouseLeave={(e) => {
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "fill",
-                                      "white"
-                                    );
-                                    e.currentTarget.firstChild.setAttribute(
-                                      "stroke",
-                                      "black"
-                                    );
+                                    if (
+                                      `/${layout}${item.path}` !== currentPath
+                                    ) {
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "fill",
+                                        "white"
+                                      );
+                                      e.currentTarget.firstChild.setAttribute(
+                                        "stroke",
+                                        "black"
+                                      );
+                                    }
                                   }}
                                 >
-                                  <TbPoint fill="white" stroke="black" />
+                                  {`/${layout}${item.path}` === currentPath ? (
+                                    <TbPoint fill="#1e88e5" stroke="#1e88e5" />
+                                  ) : (
+                                    <TbPoint fill="white" stroke="black" />
+                                  )}
                                   {item.name}
                                 </Link>
                               </li>

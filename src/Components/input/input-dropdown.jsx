@@ -34,7 +34,7 @@ const InputDropdown = ({
       />
 
       {!disable && showOption && (
-        <ul className="flex flex-col w-full z-50 absolute top-[calc(100%+5px)] rounded-md divide-y divide-gray-400 bg-white border border-gray-400 max-h-[247px] overflow-y-auto shadow-2xl">
+        <ul className="flex flex-col w-full z-20 absolute top-[calc(100%+5px)] rounded-md divide-y divide-gray-400 bg-white border border-gray-400 max-h-[247px] overflow-y-auto shadow-2xl">
           {option.length > 0 ? (
             option.map((item) => (
               <li
