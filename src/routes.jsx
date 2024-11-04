@@ -7,7 +7,8 @@ import Login from "./pages/auth/login";
 import AddPage from "./pages/admin/static-page/add-page";
 import ListPage from "./pages/admin/static-page/list-page";
 import State from "./pages/admin/location/state";
-// import City from "./pages/admin/location/city";
+import City from "./pages/admin/location/city";
+import Pincode from "./pages/admin/location/pincode";
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -65,13 +66,12 @@ const routes = [
           {
             name: "City",
             path: "/city",
-            // element: <City />,
-            element: <>City</>,
+            element: <City />,
           },
           {
             name: "Pincode",
             path: "/pincode",
-            element: <ListPage />,
+            element: <Pincode />,
           },
         ],
       },

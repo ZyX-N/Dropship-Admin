@@ -27,14 +27,14 @@ const InputDropdown = ({
       </div>
 
       <ChevronDownIcon
-        className={`absolute right-2 top-1/2 -translate-y-1/2 size-5 cursor-pointer transition-all ${
+        className={`absolute right-2 top-1/2 -translate-y-1/2 size-5 transition-all ${
           showOption && "rotate-180"
-        }`}
+        } ${disable ? "cursor-not-allowed" : "cursor-pointer"}`}
         onClick={() => !disable && setShowOption(!showOption)}
       />
 
       {!disable && showOption && (
-        <ul className="flex flex-col w-full z-10 absolute top-[calc(100%+5px)] rounded-md divide-y divide-gray-400 bg-white border border-gray-400 max-h-[247px] overflow-y-auto shadow-2xl">
+        <ul className="flex flex-col w-full z-50 absolute top-[calc(100%+5px)] rounded-md divide-y divide-gray-400 bg-white border border-gray-400 max-h-[247px] overflow-y-auto shadow-2xl">
           {option.length > 0 ? (
             option.map((item) => (
               <li
