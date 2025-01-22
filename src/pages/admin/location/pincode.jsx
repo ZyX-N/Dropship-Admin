@@ -22,6 +22,7 @@ import Pagination from "../../../Components/pagination/Pagination";
 import ModalDelete from "../../../Components/modal/delete";
 import ModalEdit from "../../../Components/modal/edit";
 import ModalDetails from "../../../Components/modal/details";
+import { getDateTime } from "../../../services/helper";
 
 const Pincode = () => {
   const token = getLoginToken();
@@ -151,15 +152,6 @@ const Pincode = () => {
     }
 
     setLoading(false);
-  };
-
-  const getDateTime = (dt) => {
-    let date = new Date(dt);
-    return Intl.DateTimeFormat("en-US", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    }).format(date);
   };
 
   const editCloseHandler = () => {

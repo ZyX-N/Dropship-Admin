@@ -25,6 +25,7 @@ import Pagination from "../../../Components/pagination/Pagination";
 import ModalDelete from "../../../Components/modal/delete";
 import ModalEdit from "../../../Components/modal/edit";
 import ModalDetails from "../../../Components/modal/details";
+import { getDateTime } from "../../../services/helper";
 
 const State = () => {
   const token = getLoginToken();
@@ -97,11 +98,6 @@ const State = () => {
     }
 
     setLoading(false);
-  };
-
-  const getDateTime = (dt) => {
-    let date = new Date(dt);
-    return date.toLocaleDateString();
   };
 
   const editCloseHandler = () => {

@@ -9,6 +9,7 @@ import ListPage from "./pages/admin/static-page/list-page";
 import State from "./pages/admin/location/state";
 import City from "./pages/admin/location/city";
 import Pincode from "./pages/admin/location/pincode";
+import OrderList from "./pages/admin/order/order-list";
 
 // const icon = {
 //   className: "w-5 h-5 text-inherit",
@@ -87,6 +88,16 @@ const routes = [
             name: "List Page",
             path: "/list-page",
             element: <ListPage />,
+          },
+        ],
+      },
+      {
+        name: "order page",
+        subPages: [
+          {
+            name: "Order List",
+            path: "/order-list",
+            element: <OrderList/>,
           },
         ],
       },
