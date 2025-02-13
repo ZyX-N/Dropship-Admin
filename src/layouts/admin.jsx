@@ -6,6 +6,7 @@ import Navbar from "../Components/navbar/Navbar";
 import { TbPoint } from "react-icons/tb";
 import Breadcrumb from "../Components/breadcrumb/Breadcrumb";
 import { getLoginToken } from "../services/token";
+import OrderDetails from "../pages/admin/order/order-details";
 
 const Admin = () => {
   const token = getLoginToken();
@@ -13,10 +14,6 @@ const Admin = () => {
   const currentPath = window.location.pathname;
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  // const [breadcrumbData, setBreadcrumbData] = useState([
-  //   { title: 'Admin', path: '/admin/dashboard' },
-  //   { title: 'Category', path: '/admin/category' }
-  // ]);
 
   const openAccordion = (e) => {
     let btn = e.currentTarget;
@@ -175,6 +172,8 @@ const Admin = () => {
                   );
                 })
             )}
+
+            <Route exact path="/order-details" element={<OrderDetails />} />
           </Routes>
         </div>
       </div>

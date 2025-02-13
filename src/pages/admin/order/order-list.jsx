@@ -20,6 +20,7 @@ import HTMLEditor from "../../../Components/input/editor";
 import ModalDetails from "../../../Components/modal/details";
 import Toast from "../../../Components/toast/toast";
 import { getDateTime } from "../../../services/helper";
+import { Link } from "react-router-dom";
 
 const OrderList = () => {
   const token = getLoginToken();
@@ -137,12 +138,12 @@ const OrderList = () => {
                         <td className="py-1.5 border-l border-gray-500 pl-2 sm:pl-4">
                           <span className="flex items-center gap-4">
                             <Tooptip message="View">
-                              <button
-                                type="button"
-                                // onClick={() => detailOpenHandler(item._id)}
+                              <Link
+                                to={`/admin/order-details?q=${order._id}`}
+                                className="cursor-pointer"
                               >
                                 <EyeIcon className="size-6 text-green-800" />
-                              </button>
+                              </Link>
                             </Tooptip>
 
                             <Tooptip message="Edit">
