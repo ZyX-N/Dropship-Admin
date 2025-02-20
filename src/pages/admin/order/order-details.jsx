@@ -1,25 +1,6 @@
-import {
-  EyeIcon,
-  PencilSquareIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import Tooptip from "../../../Components/tool-tip/Tooltip";
-import Pagination from "../../../Components/pagination/Pagination";
-import ModalDelete from "../../../Components/modal/delete";
-import ModalEdit from "../../../Components/modal/edit";
-import InputText from "../../../Components/input/Input-text";
-import InputCheckbox from "../../../Components/input/Input-checkbox";
+import React, { useEffect, useState } from "react";
 import { getLoginToken } from "../../../services/token";
 import { getCall, postCall } from "../../../services/apiCall";
-import ThreeDotSpinner from "../../../Components/spinner/Page";
-import InputDropdown from "../../../Components/input/input-dropdown";
-import { toast } from "react-toastify";
-import HTMLEditor from "../../../Components/input/editor";
-import ModalDetails from "../../../Components/modal/details";
-import Toast from "../../../Components/toast/toast";
-import { getDateTime } from "../../../services/helper";
 import { useNavigate } from "react-router-dom";
 
 const OrderDetails = () => {
@@ -78,80 +59,134 @@ const OrderDetails = () => {
   // orderFrom
   // totalMrp
 
-
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Order Header */}
-      <div className="flex justify-between items-center bg-white p-4 shadow-md rounded-md">
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800">
-            Order: {order.orderId}
-          </h2>
-          <p className="text-sm text-gray-500">
-            Last Updated: {new Date(order.updatedAt).toLocaleString()}
-          </p>
+    <div className="min-h-screen">
+      {/* Order Summary */}
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="flex justify-between items-center border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Order: {order.orderId}
+            </h2>
+            <p className="text-sm text-gray-500">
+              Last Updated: {new Date(order.updatedAt).toLocaleString()}
+            </p>
+          </div>
+          {order.isOrderCancelAble && (
+            <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+              Cancel Order
+            </button>
+          )}
         </div>
-        {order.isOrderCancelAble && (
-          <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-            Cancel Order
-          </button>
-        )}
+
+        {/* Order Details */}
+        <div className="grid grid-cols-3 gap-4 mt-4">
+          {/* Payment Details */}
+          <div className="p-4 bg-gray-50 rounded-lg border">
+            <h3 className="text-md font-semibold text-gray-700 mb-2">
+              Payment Details
+            </h3>
+            <p className="text-sm text-gray-500">
+              Method: {order.paymentMethod}
+            </p>
+            <p className="text-sm text-gray-500">
+              Status: {order.paymentStatus}
+            </p>
+          </div>
+
+          {/* Shipping Details */}
+          <div className="p-4 bg-gray-50 rounded-lg border">
+            <h3 className="text-md font-semibold text-gray-700 mb-2">
+              Shipping Method
+            </h3>
+            <p className="text-sm text-gray-500">{order.shippingMethod}</p>
+          </div>
+
+          {/* Total Price */}
+          <div className="p-4 bg-gray-50 rounded-lg border">
+            <h3 className="text-md font-semibold text-gray-700 mb-2">
+              Total Amount
+            </h3>
+            <p className="text-lg font-bold text-green-600">
+              ₹{order.totalAmountToPay}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Payment & Shipping Info */}
-      <div className="grid grid-cols-3 gap-4 mt-6">
-        <div className="p-4 bg-white shadow-md rounded-md">
-          <h3 className="text-md font-semibold text-gray-700">Payment</h3>
-          <p className="text-sm text-gray-500">Method: {order.paymentMethod}</p>
-          <p className="text-sm text-gray-500">Status: {order.paymentStatus}</p>
-        </div>
-        <div className="p-4 bg-white shadow-md rounded-md">
-          <h3 className="text-md font-semibold text-gray-700">Shipping</h3>
-          <p className="text-sm text-gray-500">
-            Method: {order.shippingMethod}
+      {/* Shipping Address */}
+      <div className="mt-6 bg-white shadow-md rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Shipping Address
+        </h3>
+        <div className="p-4 bg-gray-50 rounded-md border">
+          <p className="text-md font-semibold text-gray-700">
+            {order.shippingAddress.name}
           </p>
-        </div>
-        <div className="p-4 bg-white shadow-md rounded-md">
-          <h3 className="text-md font-semibold text-gray-700">Total</h3>
-          <p className="text-lg font-bold text-green-600">
-            ₹{order.totalAmountToPay}
+          <p className="text-sm text-gray-700">
+            📞 {order.shippingAddress.contact}
+          </p>
+          <p className="text-sm text-gray-600">
+            {order.shippingAddress.house}, {order.shippingAddress.area}
+          </p>
+          <p className="text-sm text-gray-600">
+            {order.shippingAddress.city.name},{" "}
+            {order.shippingAddress.state.name} -{" "}
+            {order.shippingAddress.pincode.code}
           </p>
         </div>
       </div>
 
       {/* Product Details */}
-      <div className="mt-6 bg-white shadow-md rounded-md p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-3">Products</h3>
-        {order?.productDetails?.map((product, index) => (
-          <div key={index} className="flex items-center gap-4 border-b py-4">
-            <img
-              src={
-                order.userInfo.find((img) => img._id === product.image[0])?.path
-              }
-              alt={product.title}
-              className="w-16 h-16 object-cover rounded-md border"
-            />
-            <div className="flex-1">
-              <h4 className="font-semibold text-gray-800">{product.title}</h4>
-              <p className="text-sm text-gray-600 line-clamp-2">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: product?.description || "",
-                  }}
-                />
-              </p>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-lg font-bold text-green-600">
-                  ₹{product.price}
-                </span>
-                <span className="text-sm text-gray-400 line-through">
-                  ₹{product.strikePrice}
-                </span>
+      <div className="mt-6 bg-white shadow-md rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">
+          Products Ordered
+        </h3>
+        {order?.productDetails?.map((product, index) => {
+          // Get Product Image
+          const productImage = order.userInfo.find(
+            (img) => img._id === product.image[0]
+          )?.path;
+
+          return (
+            <div
+              key={index}
+              className="flex items-center gap-6 border-b pb-4 mb-4"
+            >
+              {/* Product Image */}
+              <img
+                src={productImage}
+                alt={product.title}
+                className="w-24 h-24 object-cover rounded-lg border"
+              />
+
+              {/* Product Info */}
+              <div className="flex-1">
+                <h4 className="font-semibold text-gray-800">{product.title}</h4>
+                <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: product?.description || "",
+                    }}
+                  />
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="text-lg font-bold text-green-600">
+                    ₹{product.price}
+                  </span>
+                  <span className="text-sm text-gray-400 line-through">
+                    ₹{product.strikePrice}
+                  </span>
+                </div>
+              </div>
+
+              {/* Quantity */}
+              <div className="text-md font-semibold text-gray-700">
+                Qty: {product.quantity}
               </div>
             </div>
-            <span className="text-gray-600">Qty: {product.quantity}</span>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
