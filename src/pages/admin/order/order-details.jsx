@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { getLoginToken } from "../../../services/token";
 import { getCall, postCall } from "../../../services/apiCall";
 import { useNavigate } from "react-router-dom";
+import ModalDelete from "../../../Components/modal/delete";
+import ModalCancel from "../../../Components/modal/cancel";
 
 const OrderDetails = () => {
   const token = getLoginToken();
@@ -12,6 +14,7 @@ const OrderDetails = () => {
   const [orderId, setOrderId] = useState("");
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState({});
+  const [isCancelOrder, setIsCancelOrder] = useState(false);
 
   const getOrderDetails = async () => {
     const headers = {
@@ -24,6 +27,15 @@ const OrderDetails = () => {
     }
 
     setLoading(false);
+  };
+
+  const cancelCloseHanler = () => setIsCancelOrder(false);
+
+  const orderCancelHandler = (id) => {
+    console.log("Order cancel API here...! ID => ", id);
+    cancelCloseHanler();
+    getOrderDetails();
+    setLoading(true);
   };
 
   useEffect(() => {
@@ -42,23 +54,6 @@ const OrderDetails = () => {
     }
   }, [orderId]);
 
-  // return (
-  //   <>
-  //     <section className="flex flex-col gap-4">
-  //       <div className="flex flex-col gap-4">
-  //         <h1 className="text-2xl font-semibold capitalize">Order Details</h1>
-  //       </div>
-
-  //       <div className="w-full pt-4 flex flex-col gap-6 items-center">ll</div>
-  //     </section>
-
-  //     <Toast />
-  //   </>
-  // );
-
-  // orderFrom
-  // totalMrp
-
   return (
     <div className="min-h-screen">
       {/* Order Summary */}
@@ -73,7 +68,11 @@ const OrderDetails = () => {
             </p>
           </div>
           {order.isOrderCancelAble && (
-            <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+            <button
+              type="button"
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              onClick={() => setIsCancelOrder(true)}
+            >
               Cancel Order
             </button>
           )}
@@ -121,18 +120,19 @@ const OrderDetails = () => {
         </h3>
         <div className="p-4 bg-gray-50 rounded-md border">
           <p className="text-md font-semibold text-gray-700">
-            {order.shippingAddress.name}
+            {order?.shippingAddress?.name || ""}
           </p>
           <p className="text-sm text-gray-700">
-            📞 {order.shippingAddress.contact}
+            📞 {order?.shippingAddress?.contact || ""}
           </p>
           <p className="text-sm text-gray-600">
-            {order.shippingAddress.house}, {order.shippingAddress.area}
+            {order?.shippingAddress?.house || ""},{" "}
+            {order?.shippingAddress?.area || ""}
           </p>
           <p className="text-sm text-gray-600">
-            {order.shippingAddress.city.name},{" "}
-            {order.shippingAddress.state.name} -{" "}
-            {order.shippingAddress.pincode.code}
+            {order.shippingAddress?.city?.name || ""},{" "}
+            {order.shippingAddress?.state?.name || ""} -{" "}
+            {order.shippingAddress?.pincode?.code || ""}
           </p>
         </div>
       </div>
@@ -188,6 +188,14 @@ const OrderDetails = () => {
           );
         })}
       </div>
+
+      <ModalCancel
+        title="Order"
+        open={isCancelOrder}
+        id={orderId}
+        onClose={cancelCloseHanler}
+        onCancel={orderCancelHandler}
+      />
     </div>
   );
 };
