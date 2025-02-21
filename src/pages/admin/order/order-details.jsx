@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getLoginToken } from "../../../services/token";
 import { getCall, postCall } from "../../../services/apiCall";
 import { useNavigate } from "react-router-dom";
-import ModalDelete from "../../../Components/modal/delete";
+import ModalConfirm from "../../../Components/modal/confirm";
 import ModalCancel from "../../../Components/modal/cancel";
 
 const OrderDetails = () => {
@@ -15,6 +15,7 @@ const OrderDetails = () => {
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState({});
   const [isCancelOrder, setIsCancelOrder] = useState(false);
+  const [isConfirmOrder, setIsConfirmOrder] = useState(false);
 
   const getOrderDetails = async () => {
     const headers = {
@@ -30,10 +31,42 @@ const OrderDetails = () => {
   };
 
   const cancelCloseHanler = () => setIsCancelOrder(false);
+  const cancelConfirmHanler = () => setIsConfirmOrder(false);
 
-  const orderCancelHandler = (id) => {
-    console.log("Order cancel API here...! ID => ", id);
+  const orderCancelHandler = async (id) => {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const payload = {
+      id: id,
+      status: "cancelled",
+    };
+    let data = await postCall("/order/update", headers, payload);
+
+    if (data && data.status) {
+      alert("Order updated successfully...!");
+    }
+
     cancelCloseHanler();
+    getOrderDetails();
+    setLoading(true);
+  };
+
+  const orderConfirmedHandler = async (id) => {
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+    const payload = {
+      id: id,
+      status: "confirmed",
+    };
+    let data = await postCall("/order/update", headers, payload);
+
+    if (data && data.status) {
+      alert("Order updated successfully...!");
+    }
+
+    cancelConfirmHanler();
     getOrderDetails();
     setLoading(true);
   };
@@ -67,6 +100,16 @@ const OrderDetails = () => {
               Last Updated: {new Date(order.updatedAt).toLocaleString()}
             </p>
           </div>
+          {/* {order.isOrderCancelAble && ( */}
+            <button
+              type="button"
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              onClick={() => setIsConfirmOrder(true)}
+            >
+              Confirm Order
+            </button>
+          {/* )} */}
+
           {order.isOrderCancelAble && (
             <button
               type="button"
@@ -195,6 +238,14 @@ const OrderDetails = () => {
         id={orderId}
         onClose={cancelCloseHanler}
         onCancel={orderCancelHandler}
+      />
+
+      <ModalConfirm
+        title="Order"
+        open={isConfirmOrder}
+        id={orderId}
+        onClose={cancelConfirmHanler}
+        onConfirm={orderConfirmedHandler}
       />
     </div>
   );
